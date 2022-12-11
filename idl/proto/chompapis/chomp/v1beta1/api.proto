@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package chomp.v1beta1;
+
+import "chomp/v1beta1/food.proto";
+import "validate/validate.proto";
+
+// A facade for some of Chomp's endpoints.
+//
+// https://app.swaggerhub.com/apis-docs/chomp/Chomp/1.0.0-oas3#/
+service ChompService {
+  // Get data for a branded food using the food's UPC/EAN barcode.
+  //
+  // https://app.swaggerhub.com/apis-docs/chomp/Chomp/1.0.0-oas3#/default/get_food_branded_barcode_php
+  rpc GetFood(GetFoodRequest) returns (GetFoodResponse) {}
+
+  // Search for branded food items by name.
+  //
+  // https://app.swaggerhub.com/apis-docs/chomp/Chomp/1.0.0-oas3#/default/get_food_branded_name_php
+  rpc ListFoods(ListFoodsRequest) returns (ListFoodsResponse) {}
+}
+
+message GetFoodRequest {
+  // UPC/EAN barcode
+  string code = 1;
+}
+
+message GetFoodResponse {
+  Food food = 1;
+}
+
+message ListFoodsRequest {
+  // Search for branded food items using a general food name keyword. This does
+  // not have to exactly match the "official" name for the food.
+  string name = 1 [(validate.rules).string.min_len = 1];
+
+  // Set maximum number of records you want the API to return. The default value
+  // is "10."
+  int32 limit = 2;
+
+  // This is how you paginate the search result. By default, you will see the
+  // first 10 records. You must increment the page number to access the next 10
+  // records, and so on. The default value is "1."
+  int32 page = 3;
+}
+
+message ListFoodsResponse {
+  repeated Food items = 1;
+}

@@ -1,0 +1,202 @@
+syntax = "proto3";
+
+package chomp.v1beta1;
+
+message Food {
+  // EAN/UPC barcode
+  string barcode = 1;
+
+  // Item name as provided by brand owner or as shown on packaging
+  string name = 2;
+
+  // The brand name that owns this item
+  string brand = 3;
+
+  // This food item's ingredients from greatest quantity to least
+  string ingredients = 4;
+
+  // An object containing basic packaging information about this item
+  Package package = 5;
+
+  // An object containing serving information for this item
+  Serving serving = 6;
+
+  // An array of categories for this item
+  repeated string categories = 7;
+
+  // An array containing nutrient information objects for this food item
+  repeated Nutrient nutrients = 8;
+
+  // This item's compatibility grades for certain supported diets
+  DietLabels diet_labels = 9;
+
+  // An array of ingredient objects that were flagged while grading this item
+  // for compatibility with each diet
+  repeated DietFlag diet_flags = 10;
+
+  // A object containing a collection of photos of this item's packaging
+  PackagingPhotos packaging_photos = 11;
+
+  // An array of ingredients in this item that may cause allergic reactions in
+  // people
+  repeated string allergens = 12;
+
+  // An array of brands we have associated with this item. Some items are sold
+  // by more than 1 brand.
+  repeated string brand_list = 13;
+
+  // An array of countries where this item is sold
+  repeated string countries = 14;
+
+  // An object containing additional information on the countries where this
+  // item is found
+  CountryDetails country_details = 15;
+
+  // An array of ingredients made from palm oil
+  repeated string palm_oil_ingredients = 16;
+
+  // An array of this item's ingredients
+  repeated string ingredient_list = 17;
+
+  // A boolean indicating if we have English ingredients for this item
+  bool has_english_ingredients = 18;
+
+  // An array of minerals that this item contains
+  repeated string minerals = 19;
+
+  // An array of trace ingredients that may be found in this item
+  repeated string traces = 20;
+
+  // An array of vitamins that are found in this item
+  repeated string vitamins = 21;
+
+  // A description of this item
+  string description = 22;
+
+  // An array of keywords that can be used to describe this item
+  repeated string keywords = 23;
+}
+
+// An object containing basic packaging information about this item
+message Package {
+  // Package quantity
+  int32 quantity = 1;
+
+  // Package size
+  string size = 2;
+}
+
+// An object containing serving information for this item
+message Serving {
+  // Serving size
+  string size = 1;
+
+  // Measurement unit for each serving (e.g. if measure is 3 tsp, the unit is tsp)
+  string measurement_unit = 2;
+
+  // Serving size description
+  string size_fulltext = 3;
+}
+
+// An object containing information for a specific nutrient found in this food
+// item
+message Nutrient {
+  // Nutrient name
+  string name = 1;
+
+  // Amount of the nutrient per 100g of food
+  int32 per_100g = 2;
+
+  // The unit used for the measure of this nutrient
+  string measurement_unit = 3;
+
+  // Nutrient rank
+  int32 rank = 4;
+
+  // Number of observations on which the value is based
+  int32 data_points = 5;
+
+  // Description of the nutrient source
+  string description = 6;
+}
+
+// An object containing compatibility grades for certain supported diets
+message DietLabels {
+  // An object containing information on this item's compatibility with the
+  // Vegan diets
+  DietLabel vegan = 1;
+
+  // An object containing information on this item's compatibility with
+  // Vegetarian diets
+  DietLabel vegetarian = 2;
+
+  // An object containing information on this item's compatibility with Gluten
+  // Free diets
+  DietLabel gluten_free = 3;
+}
+
+// An object containing this item's compatibility grades for a particular diet
+message DietLabel {
+  string name = 1;
+  bool is_compatible = 2;
+  int32 compatibility_level = 3;
+  int32 confidence = 4;
+  string confidence_description = 5;
+}
+
+// An object containing information on an individual ingredient that was flagged
+// as potentially not being compatible with a certain diet
+message DietFlag {
+  // Ingredient name
+  string ingredient = 1;
+
+  // Description of the ingredient
+  string ingredient_description = 2;
+
+  // Name of the diet with which this ingredient may not be compatible
+  string diet_label = 3;
+  // A description of if we believe this ingredient is compatible with the diet
+  string is_compatible = 4;
+  // A numeric representation of if we believe this ingredient is compatible
+  // with the diet. Higher values indicate more compatibility
+  int32 compatibility_level = 5;
+  // A description of how we graded this ingredient for compatibility with the
+  // diet
+  string compatibility_description = 6;
+  // Boolean representing if the ingredient is a known allergen
+  bool is_allergen = 7;
+}
+
+// A object containing a collection of photos of this item's packaging
+message PackagingPhotos {
+  // An object containing photos of the front of this item's packaging
+  Photo front = 1;
+
+  // An object containing photos of this item's nutrition label
+  Photo nutrition = 2;
+
+  // An object containing photos of the ingredients on this item's packaging
+  Photo ingredients = 3;
+}
+
+// An object containing photos of the front of this item's packaging
+message Photo {
+  // Small photo of the front of this item's packaging
+  string small = 1;
+
+  // Thumbnail photo of the front of this item's packaging
+  string thumb = 2;
+
+  // Full-sized photo of the front of this item's packaging
+  string display = 3;
+}
+
+// An object containing additional information on the countries where this item
+// is found
+message CountryDetails {
+  // The number of countries where English is the country's primary language
+  int32 english_speaking = 1;
+
+  // The number of countries where English is not the country's primary language
+  int32 non_english_speaking = 2;
+}

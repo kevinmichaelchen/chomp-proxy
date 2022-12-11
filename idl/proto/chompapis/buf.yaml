@@ -1,0 +1,10 @@
+version: v1
+name: buf.build/kevinmichaelchen/chompapis
+deps:
+  - buf.build/envoyproxy/protoc-gen-validate:6607b10f00ed4a3d98f906807131c44a
+breaking:
+  use:
+    - FILE
+lint:
+  use:
+    - DEFAULT
