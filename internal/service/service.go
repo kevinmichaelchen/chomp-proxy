@@ -129,13 +129,13 @@ func hitAPI(url string) (*ChompResponse, error) {
 		return nil, fmt.Errorf("failed to read HTTP response bytes from Chomp API: %w", err)
 	}
 
+	logrus.WithField("payload", string(b)).Info("Received response from Chomp API")
+
 	var res ChompResponse
 	err = json.Unmarshal(b, &res)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal payload from Chomp API: %w", err)
 	}
-
-	logrus.WithField("payload", res).Info("Received response from Chomp API")
 
 	return &res, nil
 }
