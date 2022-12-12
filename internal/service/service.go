@@ -50,7 +50,7 @@ func (s *Service) GetFood(
 
 	// Check for Not Found
 	if len(apiRes.Items) == 0 {
-		logrus.WithError(err).Error("not found")
+		logrus.Error("no food items found")
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("no foods found"))
 	}
 
@@ -91,7 +91,7 @@ func (s *Service) ListFoods(
 
 	// Check for Not Found
 	if len(apiRes.Items) == 0 {
-		logrus.WithError(err).Error("not found")
+		logrus.Error("no food items found")
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("no foods found"))
 	}
 
@@ -111,7 +111,6 @@ func (s *Service) ListFoods(
 }
 
 func getAPIKey(headers http.Header) (string, error) {
-	logrus.WithField("headers", headers).Info("Found HTTP headers")
 	h := headers.Get("api_key")
 	if len(h) == 0 {
 		return "", errors.New("missing api_key header")
@@ -135,6 +134,8 @@ func hitAPI(url string) (*ChompResponse, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal payload from Chomp API: %w", err)
 	}
+
+	logrus.WithField("payload", res).Info("Received response from Chomp API")
 
 	return &res, nil
 }
