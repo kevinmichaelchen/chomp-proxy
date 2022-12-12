@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/bufbuild/connect-go v1.3.0
 	github.com/bufbuild/connect-grpchealth-go v1.0.0
+	github.com/bufbuild/connect-grpcreflect-go v1.0.0
 	github.com/rs/cors v1.8.2
 	github.com/sethvargo/go-envconfig v0.8.3
 	github.com/sirupsen/logrus v1.9.0

@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/bufbuild/connect-go"
 	grpchealth "github.com/bufbuild/connect-grpchealth-go"
+	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"github.com/kevinmichaelchen/chomp-proxy/pkg/cors"
 	"github.com/sethvargo/go-envconfig"
 	"github.com/sirupsen/logrus"
@@ -12,6 +14,7 @@ import (
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"net/http"
+	"time"
 )
 
 func CreateModule(opts *ModuleOptions) fx.Option {
@@ -37,6 +40,7 @@ type HandlerOutput struct {
 
 type ModuleOptions struct {
 	HandlerProvider any
+	ServiceName     string
 	Services        []string
 }
 
@@ -45,7 +49,7 @@ type Config struct {
 }
 
 type NestedConfig struct {
-	Host string `env:"HOST"`
+	Host string `env:"HOST,default=localhost"`
 	Port int    `env:"PORT,required"`
 }
 
@@ -56,14 +60,18 @@ func NewConfig() (cfg Config, err error) {
 
 func NewServer(lc fx.Lifecycle, cfg Config) *http.ServeMux {
 	mux := http.NewServeMux()
-	address := fmt.Sprintf("%s:%d", cfg.ConnectConfig.Host, cfg.ConnectConfig.Port)
+	addr := fmt.Sprintf("%s:%d", cfg.ConnectConfig.Host, cfg.ConnectConfig.Port)
 	srv := &http.Server{
-		Addr: address,
+		Addr: addr,
 		// Use h2c, so we can serve HTTP/2 without TLS.
 		Handler: h2c.NewHandler(
 			cors.NewCORS().Handler(mux),
 			&http2.Server{},
 		),
+		ReadHeaderTimeout: time.Second,
+		ReadTimeout:       5 * time.Minute,
+		WriteTimeout:      5 * time.Minute,
+		MaxHeaderBytes:    8 * 1024, // 8KiB
 	}
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
@@ -75,7 +83,7 @@ func NewServer(lc fx.Lifecycle, cfg Config) *http.ServeMux {
 					logrus.WithError(err).Error("connect-go ListenAndServe failed")
 				}
 			}()
-			logrus.WithField("address", address).Info("Listening for connect-go")
+			logrus.WithField("address", addr).Info("Listening for connect-go")
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
@@ -94,4 +102,14 @@ func Register(opts *ModuleOptions, mux *http.ServeMux, h HandlerOutput) {
 	)
 	mux.Handle(grpchealth.NewHandler(checker))
 	mux.Handle(h.Path, h.Handler)
+
+	compress1KB := connect.WithCompressMinBytes(1024)
+	mux.Handle(grpcreflect.NewHandlerV1(
+		grpcreflect.NewStaticReflector(opts.ServiceName),
+		compress1KB,
+	))
+	mux.Handle(grpcreflect.NewHandlerV1Alpha(
+		grpcreflect.NewStaticReflector(opts.ServiceName),
+		compress1KB,
+	))
 }

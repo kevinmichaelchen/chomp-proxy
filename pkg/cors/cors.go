@@ -3,8 +3,11 @@ package cors
 import (
 	"github.com/rs/cors"
 	"net/http"
+	"time"
 )
 
+// NewCORS returns a CORS HTTP handler.
+// From here: https://github.com/bufbuild/connect-demo/blob/5889de5ab3c719e2acd7d5eb5c7802a9c3cc8dd0/main.go#L88
 func NewCORS() *cors.Cors {
 	// To let web developers play with the demo service from browsers, we need a
 	// very permissive CORS setup.
@@ -36,5 +39,10 @@ func NewCORS() *cors.Cors {
 			"Grpc-Status",
 			"Grpc-Status-Details-Bin",
 		},
+		// Let browsers cache CORS information for longer, which reduces the number
+		// of preflight requests. Any changes to ExposedHeaders won't take effect
+		// until the cached data expires. FF caps this value at 24h, and modern
+		// Chrome caps it at 2h.
+		MaxAge: int(2 * time.Hour / time.Second),
 	})
 }
