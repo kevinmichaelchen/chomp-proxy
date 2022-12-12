@@ -23,9 +23,10 @@ func (s *Service) GetFood(
 	req *connect.Request[chompv1beta1.GetFoodRequest],
 ) (*connect.Response[chompv1beta1.GetFoodResponse], error) {
 	// Get API key
+	logrus.Info("Retrieving API key...")
 	apiKey, err := getAPIKey(req.Header())
 	if err != nil {
-		return nil, err
+		return nil, connect.NewError(connect.CodePermissionDenied, err)
 	}
 
 	if true {
@@ -66,9 +67,10 @@ func (s *Service) ListFoods(
 	req *connect.Request[chompv1beta1.ListFoodsRequest],
 ) (*connect.Response[chompv1beta1.ListFoodsResponse], error) {
 	// Get API key
+	logrus.Info("Retrieving API key...")
 	apiKey, err := getAPIKey(req.Header())
 	if err != nil {
-		return nil, err
+		return nil, connect.NewError(connect.CodePermissionDenied, err)
 	}
 
 	logrus.WithField("query", req.Msg.GetName()).Info("Retrieving foods...")
@@ -105,7 +107,7 @@ func (s *Service) ListFoods(
 func getAPIKey(headers http.Header) (string, error) {
 	h, ok := headers["api_key"]
 	if !ok || len(h) == 0 {
-		return "", connect.NewError(connect.CodePermissionDenied, errors.New("missing api_key header"))
+		return "", errors.New("missing api_key header")
 	}
 	return h[0], nil
 }
