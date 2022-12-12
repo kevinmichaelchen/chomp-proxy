@@ -26,6 +26,7 @@ func (s *Service) GetFood(
 	logrus.Info("Retrieving API key...")
 	apiKey, err := getAPIKey(req.Header())
 	if err != nil {
+		logrus.WithError(err).Error("missing API key")
 		return nil, connect.NewError(connect.CodePermissionDenied, err)
 	}
 
@@ -43,11 +44,13 @@ func (s *Service) GetFood(
 	// Hit Chomp API
 	apiRes, err := hitAPI(url)
 	if err != nil {
+		logrus.WithError(err).Error("call failed")
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	// Check for Not Found
 	if len(apiRes.Items) == 0 {
+		logrus.WithError(err).Error("not found")
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("no foods found"))
 	}
 
@@ -70,6 +73,7 @@ func (s *Service) ListFoods(
 	logrus.Info("Retrieving API key...")
 	apiKey, err := getAPIKey(req.Header())
 	if err != nil {
+		logrus.WithError(err).Error("missing API key")
 		return nil, connect.NewError(connect.CodePermissionDenied, err)
 	}
 
@@ -81,11 +85,13 @@ func (s *Service) ListFoods(
 	// Hit Chomp API
 	apiRes, err := hitAPI(url)
 	if err != nil {
+		logrus.WithError(err).Error("call failed")
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	// Check for Not Found
 	if len(apiRes.Items) == 0 {
+		logrus.WithError(err).Error("not found")
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("no foods found"))
 	}
 
