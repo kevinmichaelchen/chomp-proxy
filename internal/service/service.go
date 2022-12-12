@@ -111,6 +111,7 @@ func (s *Service) ListFoods(
 }
 
 func getAPIKey(headers http.Header) (string, error) {
+	logrus.WithField("headers", headers).Info("Found HTTP headers")
 	h, ok := headers["api_key"]
 	if !ok || len(h) == 0 {
 		return "", errors.New("missing api_key header")

@@ -6,8 +6,18 @@ import (
 	chompv1beta1 "go.buf.build/bufbuild/connect-go/kevinmichaelchen/chompapis/chomp/v1beta1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/testing/protocmp"
+	"net/http"
 	"testing"
 )
+
+func TestGetAPIKey(t *testing.T) {
+	h := http.Header{
+		"api_key": []string{"foobar"},
+	}
+	key, err := getAPIKey(h)
+	require.NoError(t, err)
+	require.Equal(t, "foobar", key)
+}
 
 func TestUnmarshal(t *testing.T) {
 	s := `
