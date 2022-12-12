@@ -28,6 +28,12 @@ func (s *Service) GetFood(
 		return nil, err
 	}
 
+	if true {
+		return connect.NewResponse(&chompv1beta1.GetFoodResponse{
+			Food: &chompv1beta1.Food{Name: "Fake data"},
+		}), nil
+	}
+
 	logrus.WithField("barcode", req.Msg.GetCode()).Info("Retrieving food...")
 
 	barcode := req.Msg.GetCode()
