@@ -36,13 +36,15 @@ func (s *Service) GetFood(
 	// Hit Chomp API
 	apiRes, err := hitAPI(url)
 	if err != nil {
-		return nil, err
+		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	// Check for Not Found
 	if len(apiRes.Items) == 0 {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("no foods found"))
 	}
+
+	logrus.Info("Success")
 
 	res := &chompv1beta1.GetFoodResponse{
 		Food: convert(apiRes.Items[0]),
@@ -63,19 +65,23 @@ func (s *Service) ListFoods(
 		return nil, err
 	}
 
+	logrus.WithField("query", req.Msg.GetName()).Info("Retrieving foods...")
+
 	name := req.Msg.GetName()
 	url := fmt.Sprintf("https://chompthis.com/api/v2/food/branded/name.php?api_key=%s&name=%s", apiKey, name)
 
 	// Hit Chomp API
 	apiRes, err := hitAPI(url)
 	if err != nil {
-		return nil, err
+		return nil, connect.NewError(connect.CodeInternal, err)
 	}
 
 	// Check for Not Found
 	if len(apiRes.Items) == 0 {
 		return nil, connect.NewError(connect.CodeNotFound, errors.New("no foods found"))
 	}
+
+	logrus.Info("Success")
 
 	var items []*chompv1beta1.Food
 	for _, item := range apiRes.Items {
@@ -85,7 +91,6 @@ func (s *Service) ListFoods(
 		Items: items,
 	}
 
-	logrus.WithField("query", req.Msg.GetName()).Info("Retrieving food...")
 	out := connect.NewResponse(res)
 	out.Header().Set("API-Version", "v1beta1")
 	return out, nil
