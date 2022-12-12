@@ -12,7 +12,7 @@ import (
 
 func TestGetAPIKey(t *testing.T) {
 	h := http.Header{
-		"api_key": []string{"foobar"},
+		"Api_key": []string{"foobar"},
 	}
 	key, err := getAPIKey(h)
 	require.NoError(t, err)

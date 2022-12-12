@@ -112,11 +112,11 @@ func (s *Service) ListFoods(
 
 func getAPIKey(headers http.Header) (string, error) {
 	logrus.WithField("headers", headers).Info("Found HTTP headers")
-	h, ok := headers["api_key"]
-	if !ok || len(h) == 0 {
+	h := headers.Get("api_key")
+	if len(h) == 0 {
 		return "", errors.New("missing api_key header")
 	}
-	return h[0], nil
+	return h, nil
 }
 
 func hitAPI(url string) (*ChompResponse, error) {
