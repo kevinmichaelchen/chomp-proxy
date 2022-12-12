@@ -45,7 +45,7 @@ type Config struct {
 }
 
 type NestedConfig struct {
-	Host string `env:"HOST,default=localhost"`
+	Host string `env:"HOST"`
 	Port int    `env:"PORT,required"`
 }
 
