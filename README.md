@@ -16,8 +16,8 @@ straight-forward.
 Head over to Buf Studio and start making calls.
 You'll need to set your key as the `api_key` header.
 
-* [Look up a food product by barcode](https://studio.buf.build/kevinmichaelchen/chompapis/main/chomp.v1beta1.ChompService/GetFood?target=http%3A%2F%2Fchomp-proxy.onrender.com%3A8080)
-* [Search for foods by name](https://studio.buf.build/kevinmichaelchen/chompapis/main/chomp.v1beta1.ChompService/ListFoods?target=http%3A%2F%2Fchomp-proxy.onrender.com%3A8080)
+* [Look up a food product by barcode](https://studio.buf.build/kevinmichaelchen/chompapis/main/chomp.v1beta1.ChompService/GetFood?target=https%3A%2F%2Fchomp-proxy.onrender.com)
+* [Search for foods by name](https://studio.buf.build/kevinmichaelchen/chompapis/main/chomp.v1beta1.ChompService/ListFoods?target=https%3A%2F%2Fchomp-proxy.onrender.com)
 
 ## Deployment
 
